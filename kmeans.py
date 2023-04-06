@@ -1,6 +1,8 @@
 ## Let's implement k-means and see how it does at separating the movie
 ## reviews. We'll try both euclidean distance and cosine similarity as
 ## our measures.
+import numpy as np
+import math
 
 from filters import *
 
@@ -15,12 +17,14 @@ class Cluster :
 ## d = sqrt(sum(a - b)^2)
 ## you implement this.
 def euclidean(f1, f2) :
+    # iterate through words in each fd
     pass
 
 ## assume we are passing in two FreqDists. You implement this.
 ## cos(f1,f2) = (f1 . f2) / (||f1|| ||f2||)
+# how small the angle between the two vectors is. identical documents have theta = 0 & cos(0) = 1
 def cosine_similarity(f1, f2) :
-   pass
+    pass
 
 ## assume that doc is a FreqDist representing a document, and corpus another FreqDist representing
 ## the fraction of documents that contain each word in our lexicon.

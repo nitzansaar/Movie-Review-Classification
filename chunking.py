@@ -37,7 +37,7 @@ print(cs)
 # Organization, or Person. https://www.nltk.org/book/ch07.html lists all of the types.
 
 ne_tree = ne_chunk(pos_tag(word_tokenize(example)))
-print(ne_tree)
+# print(ne_tree)
 
 ## Run the named entity chunker over your examples. What did it get right? What did it get wrong?
 
