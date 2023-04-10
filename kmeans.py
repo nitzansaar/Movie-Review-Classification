@@ -17,14 +17,34 @@ class Cluster :
 ## d = sqrt(sum(a - b)^2)
 ## you implement this.
 def euclidean(f1, f2) :
-    # iterate through words in each fd
-    pass
+    sum = 0
+    for word in f1:
+        if word in f2:
+            sum += (f1[word] - f2[word]) ** 2
+        else:
+            sum += (f1[word] ** 2)
+    for word in f2:
+        if word not in f1:
+            sum += (f2[word] ** 2)
+    euc_dist = math.sqrt(sum)
+    return euc_dist
 
 ## assume we are passing in two FreqDists. You implement this.
 ## cos(f1,f2) = (f1 . f2) / (||f1|| ||f2||)
 # how small the angle between the two vectors is. identical documents have theta = 0 & cos(0) = 1
 def cosine_similarity(f1, f2) :
-    pass
+    numerator = 0
+    sum1 = 0
+    for word in f1:
+        sum1 += f1[word] ** 2
+        if word in f2:
+            numerator += f1[word] * f2[word]
+    sum2 = 0
+    for word in f2:
+        sum2 += f2[word] ** 2
+    denominator = math.sqrt(sum1) * math.sqrt(sum2)
+    cos_sim = numerator / denominator
+    return cos_sim
 
 ## assume that doc is a FreqDist representing a document, and corpus another FreqDist representing
 ## the fraction of documents that contain each word in our lexicon.

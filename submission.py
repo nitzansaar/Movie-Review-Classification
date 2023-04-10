@@ -11,11 +11,15 @@ class Test(TestCase):
         sum = 0
         for word in f1 :
             if word in f2 :
-                print(f"{f1[word]} - {f2[word]}")
+                # print(f"{f1[word]} - {f2[word]}")
                 sum += (f1[word] - f2[word]) ** 2
             else :
-                print(f"{f1[word]} - 0")
+                # print(f"{f1[word]} - 0")
                 sum += (f1[word] ** 2)
+        for word in f2 :
+            if word not in f1 :
+                # print(f"{f2[word]} - 0")
+                sum += (f2[word] ** 2)
         euc_dist = math.sqrt(sum)
         print(euc_dist)
 
