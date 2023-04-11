@@ -1,6 +1,7 @@
 ## Let's implement k-means and see how it does at separating the movie
 ## reviews. We'll try both euclidean distance and cosine similarity as
 ## our measures.
+import random
 from collections import defaultdict
 
 import numpy as np
@@ -51,18 +52,16 @@ def cosine_similarity(f1, f2) :
 ## assume that doc is a FreqDist representing a document, and corpus another FreqDist representing
 ## the fraction of documents that contain each word in our lexicon.
 ## return a new FreqDist that maps each word in doc onto its TFIDF score
-
 def tfidf(doc, corpus):
     result = defaultdict(float)
-    corpus_length = sum(corpus.values())
+    corpus_val = sum(corpus.values())
     for word, count in doc.items():
         tf = count / len(doc)
         df = corpus[word]
-        idf = math.log(corpus_length / (1 + df))
+        # tf = doc[word]
+        idf = math.log(corpus_val / df)
         result[word] = tf * idf
     return result
-
-
 
 ## take in a list of filenames and return a list of tuples of the form
 ## [('name','FreqDist), ('name',FreqDist) ...]
@@ -76,21 +75,42 @@ def preprocess(filenames) :
         results.append((name, model))
     return results
 
+def get_corpus_freq(tuple_list):
+    result = defaultdict(int)
+    for filename, fd in tuple_list:
+        for word in fd:
+            result[word] += 1
+    return result
+
 
 def k_means(list_of_files, k, dist_measure, starting_method) :
 
     ## preprocess files - get a list of (name, FreqDist tuples)
     tuple_list = preprocess(list_of_files)
-
+    corpus_freqs = get_corpus_freq(tuple_list)
     ## compute TFIDF here. Get all the document frequencies.
+    for i, doc in enumerate(tuple_list):
+        doc_freq_dist = doc[1]
+        doc_tfidf = tfidf(doc_freq_dist, corpus_freqs)
+        tuple_list[i] = (doc[0], doc_tfidf)
 
     ## setup
     pos_cluster = Cluster()
     neg_cluster = Cluster()
 
     if starting_method == 'random_seed' :
- ## select 2 files at random.
-        pass
+        seed1, seed2 = random.sample(tuple_list, 2)
+        pos_cluster.centroid = seed1[1]
+        neg_cluster.centroid = seed2[1]
+        for doc in tuple_list:
+            if doc == seed1 or doc == seed2:
+                continue
+            distance1 = euclidean(doc[1], seed1[1])
+            distance2 = euclidean(doc[1], seed2[1])
+            if distance1 < distance2:
+                pos_cluster.members.append(doc)
+            else:
+                neg_cluster.members.append(doc)
     else :
     ## random partition
         pass
@@ -99,6 +119,7 @@ def k_means(list_of_files, k, dist_measure, starting_method) :
     ##     compute the centroid of each cluster.
     ##     for each document, place it in the cluster with the
     ##     closest centroid.
+    return tuple_list
 
 
 
