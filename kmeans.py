@@ -1,6 +1,8 @@
 ## Let's implement k-means and see how it does at separating the movie
 ## reviews. We'll try both euclidean distance and cosine similarity as
 ## our measures.
+from collections import defaultdict
+
 import numpy as np
 import math
 
@@ -50,8 +52,16 @@ def cosine_similarity(f1, f2) :
 ## the fraction of documents that contain each word in our lexicon.
 ## return a new FreqDist that maps each word in doc onto its TFIDF score
 
-def tfidf(doc, corpus) :
-    pass
+def tfidf(doc, corpus):
+    result = defaultdict(float)
+    corpus_length = sum(corpus.values())
+    for word, count in doc.items():
+        tf = count / len(doc)
+        df = corpus[word]
+        idf = math.log(corpus_length / (1 + df))
+        result[word] = tf * idf
+    return result
+
 
 
 ## take in a list of filenames and return a list of tuples of the form
