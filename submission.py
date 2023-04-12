@@ -47,9 +47,10 @@ class Test(TestCase):
         list_of_files = positive_reviews[:10] + negative_reviews[:10]
         k = 2
         dist_measure = euclidean
-        starting_method = 'random_seed'
+        # starting_method = 'random_seed'
+        starting_method = 'random_partition'
         clusters = k_means(list_of_files, k, dist_measure, starting_method)
-        print(clusters)
+        # print(clusters)
     def test_preprocess(self):
         positive_reviews = movie_reviews.fileids('pos')
         negative_reviews = movie_reviews.fileids('neg')
