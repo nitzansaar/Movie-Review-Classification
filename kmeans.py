@@ -21,6 +21,8 @@ class Cluster:
 ## d = sqrt(sum(a - b)^2)
 ## you implement this.
 def euclidean(f1, f2):
+    if f1 is None or f2 is None:
+        return float('inf')
     total = 0
     for word in f1:
         if word in f2:
@@ -60,7 +62,7 @@ def tfidf(doc, corpus):
     corpus_val = sum(corpus.values())
     for word, count in doc.items():
         tf = count / len(doc)
-        df = corpus[word]
+        df = corpus[word] + 1
         idf = math.log(corpus_val / df)
         result[word] = tf * idf
     return result
@@ -87,16 +89,14 @@ def get_corpus_freq(tuple_list):
     return result
 
 
-def k_means(list_of_files, k, dist_measure, starting_method):
-    ## preprocess files - get a list of (name, FreqDist tuples)
+def k_means(list_of_files, k, dist_measure, starting_method, converged=False):
     tuple_list = preprocess(list_of_files)
-    corpus_freqs = get_corpus_freq(tuple_list)
-    ## compute TFIDF here. Get all the document frequencies.
+    corpus_freq = get_corpus_freq(tuple_list)
     for i, doc in enumerate(tuple_list):
         doc_freq_dist = doc[1]
-        doc_tfidf = tfidf(doc_freq_dist, corpus_freqs)
+        doc_tfidf = tfidf(doc_freq_dist, corpus_freq)
         tuple_list[i] = (doc[0], doc_tfidf)
-    ## setup
+
     pos_cluster = Cluster()
     neg_cluster = Cluster()
     if starting_method == 'random_seed':
@@ -104,7 +104,7 @@ def k_means(list_of_files, k, dist_measure, starting_method):
         pos_cluster.centroid = seed1[1]
         neg_cluster.centroid = seed2[1]
         for doc in tuple_list:
-            if doc == seed1 or doc == seed2:
+            if doc == seed1[0] or doc == seed2[0]:
                 continue
             distance1 = dist_measure(doc[1], seed1[1])
             distance2 = dist_measure(doc[1], seed2[1])
@@ -112,17 +112,44 @@ def k_means(list_of_files, k, dist_measure, starting_method):
                 pos_cluster.members.append(doc)
             else:
                 neg_cluster.members.append(doc)
-    else:
-        # random partition - assigns each document to a random cluster initially
+    else:  # random partition - assigns each document to a random cluster initially
+        half_len = len(tuple_list) // 2
+        random.shuffle(tuple_list)
+        pos_cluster.centroid = compute_centroid(tuple_list[:half_len])
+        neg_cluster.centroid = compute_centroid(tuple_list[half_len:])
+    while not converged:
+        # clear cluster members
+        pos_cluster.members = []
+        neg_cluster.members = []
         for doc in tuple_list:
-            r = random.randint(0, 1)
-            if r == 0:
+            distance1 = dist_measure(doc[1], pos_cluster.centroid)
+            distance2 = dist_measure(doc[1], neg_cluster.centroid)
+            if distance1 < distance2:
                 pos_cluster.members.append(doc)
             else:
                 neg_cluster.members.append(doc)
-    ## Our algorithm:
-    ## while not converged:
-    ##     compute the centroid of each cluster.
-    ##     for each document, place it in the cluster with the
-    ##     closest centroid.
-    return tuple_list
+        new_pos_cent = compute_centroid(pos_cluster.members)
+        new_neg_cent = compute_centroid(neg_cluster.members)
+        if new_pos_cent == pos_cluster.centroid and new_neg_cent == neg_cluster.centroid:
+            converged = True
+        else:
+            pos_cluster.centroid = new_pos_cent
+            neg_cluster.centroid = new_neg_cent
+
+    # print(pos_cluster.members)
+    # print(neg_cluster)
+    return pos_cluster.members, neg_cluster.members
+
+
+def compute_centroid(members):
+    centroid = defaultdict(float)
+    num_docs = len(members)
+    for doc in members:
+        doc_freq = doc[1]
+        for word, value in doc_freq.items():
+            centroid[word] += value
+
+    for word, value in centroid.items():
+        centroid[word] /= num_docs
+
+    return centroid

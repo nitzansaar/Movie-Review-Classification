@@ -1,26 +1,25 @@
 import math
+import random
 from unittest import TestCase
 
 from nltk import FreqDist
 from nltk.corpus import movie_reviews
 
-from kmeans import cosine_similarity, euclidean, tfidf, k_means, preprocess, get_corpus_freq
+from kmeans import cosine_similarity, euclidean, tfidf, k_means, preprocess, get_corpus_freq, Cluster
 
 
 class Test(TestCase):
 
     def test_euclidean(self):
         f1 = {'it': 2, 'was': 1, 'a': 2, 'great': 2, 'movie': 1,
-              'I' : 1, 'loved' : 1, 'Denzel' : 1, 'did': 1, 'job': 1}
+              'I': 1, 'loved': 1, 'Denzel': 1, 'did': 1, 'job': 1}
         f2 = {'the': 2, 'movie': 1, 'was': 1, 'terrible': 1, 'but': 1,
               'effects': 1, 'were': 1, 'great': 1}
         print(euclidean(f1, f2))
 
-
-
     def test_cosine_similarity(self):
         f1 = {'it': 2, 'was': 1, 'a': 2, 'great': 2, 'movie': 1,
-              'I' : 1, 'loved' : 1, 'Denzel' : 1, 'did': 1, 'job': 1}
+              'I': 1, 'loved': 1, 'Denzel': 1, 'did': 1, 'job': 1}
         f2 = {'the': 2, 'movie': 1, 'was': 1, 'terrible': 1, 'but': 1,
               'effects': 1, 'were': 1, 'great': 1}
         print(cosine_similarity(f1, f2))
@@ -41,16 +40,36 @@ class Test(TestCase):
         corpus_freqs = get_corpus_freq(sample_data)
         for word, freq in corpus_freqs.items():
             print(f"{word}: {freq}")
+
     def test_kmeans(self):
         positive_reviews = movie_reviews.fileids('pos')
         negative_reviews = movie_reviews.fileids('neg')
-        list_of_files = positive_reviews[:10] + negative_reviews[:10]
-        k = 2
+        list_of_files = positive_reviews[:50] + negative_reviews[:50]
+        # list_of_files = negative_reviews + positive_reviews
+        # dist_measure = cosine_similarity # taking forever, is there something wrong
         dist_measure = euclidean
-        # starting_method = 'random_seed'
+        k = 2
+        # starting_method = 'random_seed' # pretty sure there is an issue with my random seed
         starting_method = 'random_partition'
-        clusters = k_means(list_of_files, k, dist_measure, starting_method)
-        # print(clusters)
+        pos_cluster, neg_cluster = k_means(list_of_files, k, dist_measure, starting_method)
+        pos_count = 0
+        for doc in pos_cluster:
+            if doc[0] in positive_reviews:
+                pos_count += 1
+        neg_count = 0
+        for doc in neg_cluster:
+            if doc[0] in negative_reviews:
+                neg_count += 1
+        pos_percent = (pos_count / (len(list_of_files) / 2)) * 100
+        neg_percent = (neg_count / (len(list_of_files) / 2)) * 100
+        print(f"{starting_method}, {dist_measure.__name__}")
+        print(f"Positive reviews: {pos_percent}%\nNegative reviews: {neg_percent}%")  # getting diff percentages every time, is that normal,
+                                                # also how can i know which filters/ transforms work the best if the percentages are not consistent
+        # print(pos_cluster)
+        # print(neg_cluster)
+
+    #     why are my tfidf scores so low
+
     def test_preprocess(self):
         positive_reviews = movie_reviews.fileids('pos')
         negative_reviews = movie_reviews.fileids('neg')
@@ -59,10 +78,3 @@ class Test(TestCase):
         print("Preprocessed data:")
         for file_data in preprocessed_data:
             print(f"{file_data[0]}: {file_data[1]}")
-
-
-
-
-
-
-
