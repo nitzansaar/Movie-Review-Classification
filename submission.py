@@ -2,6 +2,7 @@ import math
 import random
 from unittest import TestCase
 
+import numpy as np
 from nltk import FreqDist
 from nltk.corpus import movie_reviews
 
@@ -37,38 +38,44 @@ class Test(TestCase):
             ("file2", {"apple": 1, "banana": 4, "grape": 3}),
             ("file3", {"apple": 5, "orange": 2, "grape": 1})
         ]
-        corpus_freqs = get_corpus_freq(sample_data)
-        for word, freq in corpus_freqs.items():
+        corpus_freq = get_corpus_freq(sample_data)
+        for word, freq in corpus_freq.items():
             print(f"{word}: {freq}")
 
     def test_kmeans(self):
         positive_reviews = movie_reviews.fileids('pos')
         negative_reviews = movie_reviews.fileids('neg')
         list_of_files = positive_reviews[:50] + negative_reviews[:50]
-        # list_of_files = negative_reviews + positive_reviews
-        # dist_measure = cosine_similarity # taking forever, is there something wrong
-        dist_measure = euclidean
+        random.shuffle(list_of_files)
+        dist_measure = cosine_similarity
+        # dist_measure = euclidean
         k = 2
-        # starting_method = 'random_seed' # pretty sure there is an issue with my random seed
-        starting_method = 'random_partition'
-        pos_cluster, neg_cluster = k_means(list_of_files, k, dist_measure, starting_method)
-        pos_count = 0
-        for doc in pos_cluster:
-            if doc[0] in positive_reviews:
-                pos_count += 1
-        neg_count = 0
-        for doc in neg_cluster:
-            if doc[0] in negative_reviews:
-                neg_count += 1
-        pos_percent = (pos_count / (len(list_of_files) / 2)) * 100
-        neg_percent = (neg_count / (len(list_of_files) / 2)) * 100
+        starting_method = 'random_seed'
+        # starting_method = 'random_partition'
+        pos_percent_list = []
+        neg_percent_list = []
+        for i in range(5):
+            pos_cluster, neg_cluster = k_means(list_of_files, k, dist_measure, starting_method)
+            pos_count = 0
+            for doc in pos_cluster:
+                if doc[0] in positive_reviews:
+                    pos_count += 1
+            neg_count = 0
+            for doc in neg_cluster:
+                if doc[0] in negative_reviews:
+                    neg_count += 1
+            pos_percent = (pos_count / (len(list_of_files) / 2)) * 100
+            neg_percent = (neg_count / (len(list_of_files) / 2)) * 100
+            pos_percent_list.append(pos_percent)
+            neg_percent_list.append(neg_percent)
+        avg_pos_percent = np.mean(pos_percent_list)
+        avg_neg_percent = np.mean(neg_percent_list)
         print(f"{starting_method}, {dist_measure.__name__}")
-        print(f"Positive reviews: {pos_percent}%\nNegative reviews: {neg_percent}%")  # getting diff percentages every time, is that normal,
-                                                # also how can i know which filters/ transforms work the best if the percentages are not consistent
-        # print(pos_cluster)
-        # print(neg_cluster)
-
-    #     why are my tfidf scores so low
+        # greater number to be used for accuracy
+        if avg_pos_percent > avg_neg_percent:
+            print(f"Average Positive reviews: {avg_pos_percent}%")
+        else:
+            print(f"Average Negative reviews: {avg_neg_percent}%")
 
     def test_preprocess(self):
         positive_reviews = movie_reviews.fileids('pos')

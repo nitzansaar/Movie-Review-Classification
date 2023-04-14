@@ -16,12 +16,20 @@ def alphabetic(token):
 def stopword(token):
     return token not in eng_words
 
+
 # removes words that are less than 3 characters long
-def short_word(token, min_length=3):
-    return len(token) >= min_length
+def short_or_long_word(token, min_length=3, max_length=8):
+    return min_length <= len(token) <= max_length
 
 
-filters = [alphabetic, stopword, short_word]
+filters = [alphabetic, stopword, short_or_long_word]
+
+
+def replace_contractions(token):
+    if "n't" in token:
+        return "not"
+    else:
+        return token
 
 
 def trim(token):
@@ -64,5 +72,4 @@ def apply_transforms(transforms, list_of_tokens):
     return changed
 
 
-transforms = [trim, lowercase, remove_digits]
-
+transforms = [trim, lowercase, remove_digits, replace_contractions]

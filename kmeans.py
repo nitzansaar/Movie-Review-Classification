@@ -21,8 +21,6 @@ class Cluster:
 ## d = sqrt(sum(a - b)^2)
 ## you implement this.
 def euclidean(f1, f2):
-    if f1 is None or f2 is None:
-        return float('inf')
     total = 0
     for word in f1:
         if word in f2:
@@ -40,17 +38,11 @@ def euclidean(f1, f2):
 ## cos(f1,f2) = (f1 . f2) / (||f1|| ||f2||)
 # how small the angle between the two vectors is. identical documents have theta = 0 & cos(0) = 1
 def cosine_similarity(f1, f2):
-    numerator = 0
-    sum1 = 0
-    for word in f1:
-        sum1 += f1[word] ** 2
-        if word in f2:
-            numerator += f1[word] * f2[word]
-    sum2 = 0
-    for word in f2:
-        sum2 += f2[word] ** 2
-    denominator = math.sqrt(sum1) * math.sqrt(sum2)
-    cos_sim = numerator / denominator
+    common_keys = set(f1.keys()) & set(f2.keys())
+    dot_product = sum(f1[key] * f2[key] for key in common_keys)
+    f1_norm = np.sqrt(sum(value ** 2 for value in f1.values()))
+    f2_norm = np.sqrt(sum(value ** 2 for value in f2.values()))
+    cos_sim = dot_product / (f1_norm * f2_norm)
     return cos_sim
 
 
@@ -96,27 +88,36 @@ def k_means(list_of_files, k, dist_measure, starting_method, converged=False):
         doc_freq_dist = doc[1]
         doc_tfidf = tfidf(doc_freq_dist, corpus_freq)
         tuple_list[i] = (doc[0], doc_tfidf)
-
     pos_cluster = Cluster()
     neg_cluster = Cluster()
     if starting_method == 'random_seed':
         seed1, seed2 = random.sample(tuple_list, 2)
         pos_cluster.centroid = seed1[1]
         neg_cluster.centroid = seed2[1]
+        while pos_cluster.centroid == neg_cluster.centroid:
+            seed1, seed2 = random.sample(tuple_list, 2)
+            neg_cluster.centroid = seed2[1]
         for doc in tuple_list:
-            if doc == seed1[0] or doc == seed2[0]:
+            if doc[0] == seed1[0] or doc == seed2[0]:
                 continue
             distance1 = dist_measure(doc[1], seed1[1])
             distance2 = dist_measure(doc[1], seed2[1])
-            if distance1 < distance2:
-                pos_cluster.members.append(doc)
+            if dist_measure.__name__ == 'euclidean':
+                if distance1 < distance2:
+                    pos_cluster.members.append(doc)
+                else:
+                    neg_cluster.members.append(doc)
             else:
-                neg_cluster.members.append(doc)
+                if abs(distance1 - 1) < abs(distance2 - 1):
+                    pos_cluster.members.append(doc)
+                else:
+                    neg_cluster.members.append(doc)
     else:  # random partition - assigns each document to a random cluster initially
         half_len = len(tuple_list) // 2
         random.shuffle(tuple_list)
         pos_cluster.centroid = compute_centroid(tuple_list[:half_len])
         neg_cluster.centroid = compute_centroid(tuple_list[half_len:])
+    threshold = 0
     while not converged:
         # clear cluster members
         pos_cluster.members = []
@@ -135,9 +136,9 @@ def k_means(list_of_files, k, dist_measure, starting_method, converged=False):
         else:
             pos_cluster.centroid = new_pos_cent
             neg_cluster.centroid = new_neg_cent
-
-    # print(pos_cluster.members)
-    # print(neg_cluster)
+        if threshold == 10:  # to stop the loop if running too long
+            break
+        threshold += 1
     return pos_cluster.members, neg_cluster.members
 
 
@@ -146,8 +147,10 @@ def compute_centroid(members):
     num_docs = len(members)
     for doc in members:
         doc_freq = doc[1]
+        # print(doc_freq)
         for word, value in doc_freq.items():
             centroid[word] += value
+            # print(value)
 
     for word, value in centroid.items():
         centroid[word] /= num_docs
