@@ -44,7 +44,7 @@ for sent in sentences:
 
     # Named Entity Recognition
     ne_tree = ne_chunk(pos_tag(word_tokenize(sent)))
-    print("Named Entity Recognition:")
+    # print("Named Entity Recognition:")
     pprint(tree2conlltags(ne_tree))
     print("\n")
 

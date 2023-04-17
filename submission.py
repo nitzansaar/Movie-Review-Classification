@@ -47,8 +47,8 @@ class Test(TestCase):
         negative_reviews = movie_reviews.fileids('neg')
         list_of_files = positive_reviews[:50] + negative_reviews[:50]
         random.shuffle(list_of_files)
-        dist_measure = cosine_similarity
-        # dist_measure = euclidean
+        # dist_measure = cosine_similarity
+        dist_measure = euclidean
         k = 2
         starting_method = 'random_seed'
         # starting_method = 'random_partition'
