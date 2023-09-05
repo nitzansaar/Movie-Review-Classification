@@ -3,13 +3,9 @@
 This project implements K-means clustering to separate movie reviews based on the similarity of their word frequency distributions. Both Euclidean distance and Cosine similarity measures are utilized for clustering. Additionally, a Naive Bayes classifier is implemented using NLTK to categorize movie reviews as positive or negative.
 
 ## Table of Contents
-- [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
 - [Features](#features)
 - [What I Learned](#what-i-learned)
-
-## Getting Started
-Clone the repository to your local machine to get started with the project.
 
 ## Prerequisites
 The code relies on the following Python libraries, which need to be installed.
