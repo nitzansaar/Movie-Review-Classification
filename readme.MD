@@ -31,14 +31,14 @@ Copy code
 python main_script.py
 
 ## Features
-K-means Clustering: The program uses K-means clustering to group movie reviews based on the similarity of their term frequency-inverse document frequency (TF-IDF) scores. It supports both Euclidean distance and Cosine similarity as distance measures.
-Naive Bayes Classifier: A Naive Bayes Classifier is implemented to categorize movie reviews as positive or negative.
-Natural Language Processing: The program uses NLTK for text processing and feature extraction. It incorporates Named Entity Recognition and Noun Phrase Chunking.
-Data Preprocessing: Text data is cleaned and preprocessed using various techniques like tokenization, stemming, and removal of stopwords.
+- K-means Clustering: The program uses K-means clustering to group movie reviews based on the similarity of their term frequency-inverse document frequency (TF-IDF) scores. It supports both Euclidean distance and Cosine similarity as distance measures.
+- Naive Bayes Classifier: A Naive Bayes Classifier is implemented to categorize movie reviews as positive or negative.
+- Natural Language Processing: The program uses NLTK for text processing and feature extraction. It incorporates Named Entity Recognition and Noun Phrase Chunking.
+- Data Preprocessing: Text data is cleaned and preprocessed using various techniques like tokenization, stemming, and removal of stopwords.
 
 ## What I Learned
-Gained experience in implementing K-means clustering from scratch.
-Learned about different distance metrics like Euclidean Distance and Cosine Similarity and their applications in text clustering.
-Acquired hands-on experience with Natural Language Processing using the NLTK library, specifically in the areas of Named Entity Recognition and Noun Phrase Chunking.
-Understood the workings of Naive Bayes classifiers and their applications in text categorization.
-Learned data preprocessing techniques like tokenization, stemming, and stopwords removal for feature extraction in NLP tasks.
+- Gained experience in implementing K-means clustering from scratch.
+- Learned about different distance metrics like Euclidean Distance and Cosine Similarity and their applications in text clustering.
+- Acquired hands-on experience with Natural Language Processing using the NLTK library, specifically in the areas of Named Entity Recognition and Noun Phrase Chunking.
+- Understood the workings of Naive Bayes classifiers and their applications in text categorization.
+- Learned data preprocessing techniques like tokenization, stemming, and stopwords removal for feature extraction in NLP tasks.
