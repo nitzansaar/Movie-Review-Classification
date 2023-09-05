@@ -15,19 +15,19 @@ Clone the repository to your local machine to get started with the project.
 ## Prerequisites
 The code relies on the following Python libraries, which need to be installed.
 
-numpy
-nltk
+- numpy
+- nltk
 You can install them using pip:
 
-bash
+- bash
 Copy code
-pip install numpy nltk
+- pip install numpy nltk
 
 ## Usage
-Make sure you have all the prerequisites installed.
-Run the main Python script to see the K-means clustering and Naive Bayes classifier in action.
+- Make sure you have all the prerequisites installed.
+- Run the main Python script to see the K-means clustering and Naive Bayes classifier in action.
 bash
-Copy code
+- Copy code
 python main_script.py
 
 ## Features
