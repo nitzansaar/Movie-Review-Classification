@@ -5,7 +5,6 @@ This project implements K-means clustering to separate movie reviews based on th
 ## Table of Contents
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
-- [Usage](#usage)
 - [Features](#features)
 - [What I Learned](#what-i-learned)
 
@@ -17,18 +16,6 @@ The code relies on the following Python libraries, which need to be installed.
 
 - numpy
 - nltk
-You can install them using pip:
-
-- bash
-Copy code
-- pip install numpy nltk
-
-## Usage
-- Make sure you have all the prerequisites installed.
-- Run the main Python script to see the K-means clustering and Naive Bayes classifier in action.
-bash
-- Copy code
-python main_script.py
 
 ## Features
 - K-means Clustering: The program uses K-means clustering to group movie reviews based on the similarity of their term frequency-inverse document frequency (TF-IDF) scores. It supports both Euclidean distance and Cosine similarity as distance measures.
