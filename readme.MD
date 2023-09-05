@@ -1,4 +1,4 @@
-# K-Means Text Clustering and Naive Bayes Classifier for Movie Reviews
+# Movie Review Classifier
 
 This project implements K-means clustering to separate movie reviews based on the similarity of their word frequency distributions. Both Euclidean distance and Cosine similarity measures are utilized for clustering. Additionally, a Naive Bayes classifier is implemented using NLTK to categorize movie reviews as positive or negative.
 
